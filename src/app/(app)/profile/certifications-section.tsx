@@ -32,9 +32,9 @@ function CertificationForm({
   const set = (change: Partial<CertificationItem>) => onChange({ ...entry, ...change });
 
   return (
-    <div className="grid grid-cols-2 gap-[18px]" onBlur={flush}>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-[18px]" onBlur={flush}>
       <Input
-        className="col-span-2"
+        className="sm:col-span-2"
         label="Certification"
         placeholder="Certified Accessibility Specialist"
         value={entry.name}
@@ -42,7 +42,7 @@ function CertificationForm({
         autoFocus={autoFocus}
       />
       <Input
-        className="col-span-2"
+        className="sm:col-span-2"
         label="Issued by"
         placeholder="Inclusive Design Institute"
         value={entry.issuer}
@@ -54,7 +54,7 @@ function CertificationForm({
         value={{ month: entry.expiryMonth, year: entry.expiryYear }}
         onChange={({ month, year }) => set({ expiryMonth: month, expiryYear: year })}
       />
-      <p className="col-span-2 -mt-2.5 text-label text-muted">Leave Expires empty when it doesn&apos;t run out. Resumes say how long it&apos;s valid.</p>
+      <p className="sm:col-span-2 -mt-2.5 text-label text-muted">Leave Expires empty when it doesn&apos;t run out. Resumes say how long it&apos;s valid.</p>
       <Input
         label={optional("Credential ID")}
         placeholder="IDI-20481"
@@ -69,7 +69,7 @@ function CertificationForm({
         onChange={(event) => set({ link: event.target.value })}
       />
       <Checkbox
-        className="col-span-2"
+        className="sm:col-span-2"
         label="Show on resumes"
         hint="Off keeps it in your profile, but leaves it off every resume and out of what the AI reads."
         checked={entry.onResumes}

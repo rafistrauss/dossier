@@ -122,7 +122,7 @@ export function ProfileEditor({ initial, section, order, sections }: { initial: 
         }
       />
 
-      <div className="flex flex-wrap items-start gap-x-12 gap-y-10 px-10 pt-2 pb-20">
+      <div className="flex flex-wrap items-start gap-x-12 gap-y-10 px-4 sm:px-10 pt-2 pb-20">
         <div className="flex max-w-[260px] min-w-[220px] flex-[1_1_240px] flex-col gap-6">
           <StrengthMeter profile={profile} />
           <SectionNav

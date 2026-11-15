@@ -171,7 +171,7 @@ export function PostingResults(props: PostingResultsProps) {
             : `No postings for “${searched.keywords}”${searched.place ? ` in ${searched.place}` : ""}. Try fewer words.`;
 
   return (
-    <div className="flex flex-wrap items-start gap-6 px-10 pb-16">
+    <div className="flex flex-wrap items-start gap-6 px-4 sm:px-10 pb-16">
       {Object.entries(scoring).map(([key, { jobId }]) =>
         jobId ? <ScoreWatcher key={jobId} jobId={jobId} onChange={(job) => scoringChanged(key, job)} /> : null,
       )}

@@ -84,12 +84,12 @@ export function BasicsSection({
   const age = ageOn(basics.dob, new Date());
 
   return (
-    <Card className="grid grid-cols-2 gap-x-[18px] gap-y-5">
+    <Card className="grid grid-cols-1 sm:grid-cols-2 gap-x-[18px] gap-y-5">
       <PhotoField photo={photo} onChange={onPhotoChange} />
       {FIELDS.map(({ field, label, wide, placeholder, type, autoComplete }) => (
         <Input
           key={field}
-          className={wide ? "col-span-2" : undefined}
+          className={wide ? "sm:col-span-2" : undefined}
           label={isOptionalBasic(field) ? <Optional label={label} /> : label}
           type={type}
           placeholder={placeholder}
@@ -101,7 +101,7 @@ export function BasicsSection({
         />
       ))}
       <Checkbox
-        className="col-span-2 pt-1"
+        className="sm:col-span-2 pt-1"
         label={
           <>
             Show my age on resumes{" "}

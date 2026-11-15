@@ -1,7 +1,8 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { cookies } from "next/headers";
 import { connection } from "next/server";
 
+import { PwaRegistration } from "@/components/pwa-registration";
 import { Toaster } from "@/components/toast";
 import { fontVariables } from "@/fonts";
 import { COLOR_SCHEME_COOKIE, parseColorScheme } from "@/lib/ui-preferences";
@@ -11,6 +12,19 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: { default: "Dossier", template: "%s · Dossier" },
   description: "Your job search, on your server.",
+  applicationName: "Dossier",
+  appleWebApp: { capable: true, title: "Dossier", statusBarStyle: "default" },
+  icons: { apple: "/icons/apple-touch-icon.png" },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#eeebe4" },
+    { media: "(prefers-color-scheme: dark)", color: "#1a1917" },
+  ],
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
@@ -23,6 +37,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full">
         {children}
         <Toaster />
+        <PwaRegistration />
       </body>
     </html>
   );
