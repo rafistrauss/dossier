@@ -88,6 +88,21 @@ beforeEach(() => {
 });
 
 describe("the search form", () => {
+  it("sends salary filters with the search and restores them from a saved query", async () => {
+    const { rerender } = renderScreen();
+    await userEvent.type(screen.getByLabelText("Minimum annual salary"), "120000");
+    await userEvent.selectOptions(screen.getByLabelText("Salary currency"), "EUR");
+    await userEvent.click(screen.getByLabelText("Require salary data"));
+    await userEvent.click(screen.getByLabelText("Exclude estimated salaries"));
+    await userEvent.click(screen.getByRole("button", { name: "Search" }));
+    expect(runJobSearch).toHaveBeenCalledWith({ query: { ...query, minimumSalary: 120000, salaryCurrency: "EUR", requireSalary: true, excludeEstimatedSalary: true } });
+    rerender(<JobsScreen {...screenProps} query={{ ...query, minimumSalary: 95000, salaryCurrency: "GBP", requireSalary: true }} />);
+    expect(screen.getByLabelText("Minimum annual salary")).toHaveValue(95000);
+    expect(screen.getByLabelText("Salary currency")).toHaveValue("GBP");
+    expect(screen.getByLabelText("Require salary data")).toBeChecked();
+    expect(screen.getByLabelText("Exclude estimated salaries")).not.toBeChecked();
+  });
+
   it("points to Settings while job search is off", () => {
     renderScreen({ source: null });
     expect(screen.getByRole("heading", { name: "Choose where to search" })).toBeInTheDocument();

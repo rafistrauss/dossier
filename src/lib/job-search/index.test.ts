@@ -21,6 +21,19 @@ afterEach(() => {
 });
 
 describe("searchPostings", () => {
+  it("filters every page on the server while preserving the next-page cursor and cache isolation", async () => {
+    stubFetch(() => json(jsearchV2Page));
+    const filtered = await searchPostings("JSEARCH", ninja, { ...query, minimumSalary: 80000, salaryCurrency: "EUR" });
+    expect(filtered.postings).toEqual([]);
+    expect(filtered.next).toBe("cursor:CURSOR-PAGE-2");
+    const included = await searchPostings("JSEARCH", ninja, { ...query, minimumSalary: 75000, salaryCurrency: "EUR" }, filtered.next);
+    expect(included.postings).toHaveLength(1);
+    expect(included.postings[0].salaryData?.minimumAnnual).toBe(75000);
+    const juniorWithSalary = await searchPostings("JSEARCH", ninja, { ...query, experience: "junior", minimumSalary: 75000, salaryCurrency: "EUR" });
+    expect(juniorWithSalary.postings).toEqual([]);
+    expect((await searchPostings("JSEARCH", ninja, query)).postings).toHaveLength(2);
+  });
+
   it("asks the source once per half hour for the same search and page", async () => {
     const requests = stubFetch(() => json(jsearchV2Page));
     const first = await searchPostings("JSEARCH", ninja, query);

@@ -7,6 +7,7 @@ import { fetchPosting } from "@/lib/posting-fetch";
 import type { JobSourceAdapter, RequestContext } from "./adapter";
 import { jobSearchError } from "./errors";
 import { requestJson } from "./http";
+import { salaryData } from "./salary";
 import { POSTED_WITHIN, safeLink, type FoundPosting, type SearchPage, type SearchQuery } from "./search";
 import { FREEHIRE_URL } from "./sources";
 
@@ -96,6 +97,7 @@ export function postingFromJob(job: Job): FoundPosting {
     place: (job.location ?? "").trim().slice(0, 300),
     remote: remoteOf(job.work_mode),
     salary: salaryOf(job).slice(0, 200),
+    salaryData: salaryData(job.enrichment?.salary_min, job.enrichment?.salary_currency, job.enrichment?.salary_period),
     postedAt: postedAtOf(job.posted_at),
     url: safeLink(job.url).slice(0, 2000),
     via: (job.source ?? "").trim().slice(0, 100),

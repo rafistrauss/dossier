@@ -166,9 +166,11 @@ export function PostingResults(props: PostingResultsProps) {
         ? "Nothing dismissed. Postings you dismiss stay out of your searches and wait here."
         : postings.length > 0 || !searched
           ? "You've dismissed every posting here."
-          : radius
-            ? `No postings for “${searched.keywords}”${searched.place ? ` within ${searched.radiusKm} km of ${searched.place}` : ""}. Try a bigger radius or fewer words.`
-            : `No postings for “${searched.keywords}”${searched.place ? ` in ${searched.place}` : ""}. Try fewer words.`;
+          : searched.minimumSalary || searched.requireSalary || searched.excludeEstimatedSalary
+            ? `No postings on ${next ? "the loaded pages" : "this search"} match your salary filters.${next ? " Choose Show more to check the next page, or adjust your filters." : " Try a lower minimum or allow missing salaries or estimates."}`
+            : radius
+              ? `No postings for “${searched.keywords}”${searched.place ? ` within ${searched.radiusKm} km of ${searched.place}` : ""}. Try a bigger radius or fewer words.`
+              : `No postings for “${searched.keywords}”${searched.place ? ` in ${searched.place}` : ""}. Try fewer words.`;
 
   return (
     <div className="flex flex-wrap items-start gap-6 px-4 sm:px-10 pb-16">
