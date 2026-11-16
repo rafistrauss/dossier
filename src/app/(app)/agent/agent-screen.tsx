@@ -102,7 +102,7 @@ export function AgentScreen({ view }: { view: AgentView }) {
           </Button>
         }
       />
-      <div className="flex flex-col gap-8 px-4 pb-20 sm:px-10">
+      <div className="flex flex-col gap-8 px-4 pb-20 sm:px-4 sm:px-10">
         <Notices view={view} />
 
         <Card padding="none" className="px-7 py-2">

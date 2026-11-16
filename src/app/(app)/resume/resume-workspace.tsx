@@ -239,7 +239,7 @@ export function ResumeWorkspace({
         <aside
           ref={panelArea}
           aria-label="Theme and sections"
-          className="flex flex-[1_0_300px] flex-col gap-6 border-t border-line bg-paper px-7 pt-7 pb-12 @min-[780px]:border-t-0 @min-[780px]:border-l"
+          className="flex min-w-0 flex-[1_1_300px] flex-col gap-6 border-t border-line bg-paper px-7 pt-7 pb-12 @min-[780px]:border-t-0 @min-[780px]:border-l"
         >
           <Toggle
             label="Fit to one page"

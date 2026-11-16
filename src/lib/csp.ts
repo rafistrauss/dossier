@@ -23,6 +23,8 @@ export function contentSecurityPolicy(nonce: string, { dev = false, https = fals
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' blob: data:",
     "font-src 'self'",
+    "worker-src 'self'",
+    "manifest-src 'self'",
     "connect-src 'self'",
     "object-src 'none'",
     "base-uri 'self'",

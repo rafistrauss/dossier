@@ -48,9 +48,9 @@ function ExperienceForm({
   const set = (change: Partial<ExperienceItem>) => onChange({ ...entry, ...change });
 
   return (
-    <div className="grid grid-cols-2 gap-[18px]" onBlur={flush}>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-[18px]" onBlur={flush}>
       <Input
-        className="col-span-2"
+        className="sm:col-span-2"
         label="Role"
         placeholder="Product Designer"
         value={entry.role}
@@ -70,7 +70,7 @@ function ExperienceForm({
         onChange={(event) => set({ location: event.target.value })}
       />
       <Input
-        className="col-span-2"
+        className="sm:col-span-2"
         label="About the company or role"
         placeholder="A 40-person fintech, building card payments"
         hint="Optional. One line, in italics under the role on your resume."

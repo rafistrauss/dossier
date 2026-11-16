@@ -44,7 +44,7 @@ function CustomItemForm({
   const set = (change: Partial<CustomItem>) => onChange({ ...entry, ...change });
   const link = (
     <Input
-      className="col-span-2"
+      className="sm:col-span-2"
       label={optional("Link")}
       placeholder="example.org/award"
       hint="On a PDF, the link can be clicked."
@@ -54,18 +54,18 @@ function CustomItemForm({
   );
 
   return (
-    <div className="grid grid-cols-2 gap-[18px]" onBlur={flush}>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-[18px]" onBlur={flush}>
       {format === "ENTRIES" && (
         <>
-          <Input className="col-span-2" label="Title" placeholder="Mentor" value={entry.title} onChange={(event) => set({ title: event.target.value })} autoFocus={autoFocus} />
-          <Input className="col-span-2" label={optional("Where or with whom")} placeholder="Code Club" value={entry.subtitle} onChange={(event) => set({ subtitle: event.target.value })} />
+          <Input className="sm:col-span-2" label="Title" placeholder="Mentor" value={entry.title} onChange={(event) => set({ title: event.target.value })} autoFocus={autoFocus} />
+          <Input className="sm:col-span-2" label={optional("Where or with whom")} placeholder="Code Club" value={entry.subtitle} onChange={(event) => set({ subtitle: event.target.value })} />
           <MonthYearField label="Started" value={{ month: entry.startMonth, year: entry.startYear }} onChange={({ month, year }) => set({ startMonth: month, startYear: year })} />
           <div className="flex flex-col gap-2.5">
             <MonthYearField label="Finished" value={{ month: entry.endMonth, year: entry.endYear }} onChange={({ month, year }) => set({ endMonth: month, endYear: year })} disabled={entry.current} />
             <Checkbox label="Still going" checked={entry.current} onChange={(event) => set({ current: event.target.checked })} />
           </div>
           <Textarea
-            className="col-span-2"
+            className="sm:col-span-2"
             label={optional("Details")}
             hint="One bullet per line."
             placeholder="Taught 40 pupils to build their first website"
@@ -79,7 +79,7 @@ function CustomItemForm({
       {format === "LINES" && (
         <>
           <Textarea
-            className="col-span-2"
+            className="sm:col-span-2"
             label="Text"
             hint="As long as you like. Write **bold** or *italic* with asterisks."
             placeholder="Best Paper Award, CHI 2023"
@@ -91,9 +91,9 @@ function CustomItemForm({
           {link}
         </>
       )}
-      {format === "INLINE" && <Input className="col-span-2" label="Item" placeholder="Climbing" value={entry.title} onChange={(event) => set({ title: event.target.value })} autoFocus={autoFocus} />}
+      {format === "INLINE" && <Input className="sm:col-span-2" label="Item" placeholder="Climbing" value={entry.title} onChange={(event) => set({ title: event.target.value })} autoFocus={autoFocus} />}
       <Checkbox
-        className="col-span-2"
+        className="sm:col-span-2"
         label="Show on resumes"
         hint="Off keeps it in your profile, but leaves it off every resume and out of what the AI reads."
         checked={entry.onResumes}

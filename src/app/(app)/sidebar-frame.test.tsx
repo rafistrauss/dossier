@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { ComponentProps } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -50,6 +50,24 @@ describe("SidebarFrame", () => {
     await userEvent.click(screen.getByRole("button", { name: "Expand sidebar" }));
     expect(screen.getByRole("complementary")).not.toHaveAttribute("data-collapsed");
     expect(document.cookie).toContain("dossier_sidebar=expanded");
+  });
+
+  it("opens full mobile navigation without changing the desktop preference, and closes on a link", async () => {
+    renderSidebar(true);
+    const user = userEvent.setup();
+    const trigger = screen.getByRole("button", { name: "Open navigation" });
+    await user.click(trigger);
+    const drawer = screen.getByRole("dialog", { name: "Navigation" });
+    expect(within(drawer).getByRole("link", { name: "Applications" })).not.toHaveAttribute("title");
+    expect(drawer).toContainElement(document.activeElement as HTMLElement);
+    await user.keyboard("{Escape}");
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(trigger).toHaveFocus();
+    await user.click(trigger);
+    await user.click(within(screen.getByRole("dialog")).getByRole("link", { name: "Applications" }));
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(screen.getByRole("complementary")).toHaveAttribute("data-collapsed", "true");
+    expect(document.cookie).not.toContain("dossier_sidebar=expanded");
   });
 
   it("starts collapsed when it was left that way", () => {

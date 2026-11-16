@@ -66,7 +66,7 @@ export function ScoringSection({ initial }: { initial: ScoringView }) {
         aria-label="Score postings with"
         value={view.scorer}
         onValueChange={(value) => void choose(value as Scorer)}
-        className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-3"
+        className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,240px),1fr))] gap-3"
       >
         {SCORERS.map((scorer) => (
           <RadioGroup.Item

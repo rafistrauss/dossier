@@ -27,7 +27,7 @@ function request(path: string, init: { cookie?: string; headers?: Record<string,
 
 describe("proxy matcher", () => {
   it("runs on pages, the sign-in page and API routes", () => {
-    for (const url of ["/", "/login", "/profile", "/applications/abc", "/new", "/dev/ui", "/api/pdf/1", "/loginx"]) {
+    for (const url of ["/", "/login", "/profile", "/applications/abc", "/new", "/dev/ui", "/api/pdf/1", "/loginx", "/sw.js/private", "/offline.html/private"]) {
       expect(matches(url), url).toBe(true);
     }
   });
@@ -41,6 +41,10 @@ describe("proxy matcher", () => {
       "/_next/hmr",
       "/favicon.ico",
       "/next.svg",
+      "/manifest.webmanifest",
+      "/sw.js",
+      "/offline.html",
+      "/icons/icon-192.png",
     ]) {
       expect(matches(url), url).toBe(false);
     }

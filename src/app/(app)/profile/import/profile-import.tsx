@@ -117,7 +117,7 @@ export function ProfileImport({
           }
         />
       )}
-      <div ref={area} className={inGuide ? "flex flex-col gap-6" : "flex max-w-[816px] flex-col gap-6 px-10 pb-20"}>
+      <div ref={area} className={inGuide ? "flex flex-col gap-6" : "flex max-w-[816px] flex-col gap-6 px-4 sm:px-10 pb-20"}>
         {phase === "choose" && (
           <Card className="flex flex-col items-start gap-5">
             {!aiReady && (

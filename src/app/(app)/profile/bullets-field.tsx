@@ -39,7 +39,7 @@ export function BulletsField({ value, onChange, placeholder }: { value: string; 
   };
 
   return (
-    <div className="col-span-2 flex flex-col gap-[7px]">
+    <div className="sm:col-span-2 flex flex-col gap-[7px]">
       <div className="flex items-end justify-between gap-3">
         <label htmlFor={id} className="text-label font-medium text-ink">
           What you did
