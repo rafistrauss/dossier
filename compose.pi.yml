@@ -1,0 +1,24 @@
+# Build the checked-out integration branch, then run behind host Caddy.
+services:
+  app:
+    image: dossier:pi-integration
+    build:
+      context: .
+      target: production
+    restart: unless-stopped
+    init: true
+    environment:
+      DATABASE_URL: file:/data/dossier.db
+      DOSSIER_PASSWORD: ${DOSSIER_PASSWORD:?Set the password hash in .env}
+      DOSSIER_SECRET: ${DOSSIER_SECRET:?Set a random secret in .env}
+      DOSSIER_PUBLIC_URL: https://dossier.rafistrauss.com
+      TZ: America/New_York
+    ports:
+      - '127.0.0.1:3080:3000'
+    volumes:
+      - data:/data
+    mem_limit: 1g
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+volumes:
+  data:
