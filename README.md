@@ -115,6 +115,14 @@ Without that volume, the next upgrade deletes the data, and the container warns 
 
 To put Dossier on a server, on your own domain with HTTPS, follow the [installation guide](https://github.com/AienTech/dossier/wiki#self-host-on-a-server): a plain Ubuntu server with Docker Compose and Caddy (or Node.js, without Docker), CapRover, Coolify or Dokploy. Give the server at least 2 vCPUs and 2 GB of memory (see [Performance and sizing](#performance-and-sizing)).
 
+## Mobile and home-screen installation
+
+Dossier works on phones and tablets. Use the menu at the top to navigate; wide application tables and boards scroll within their panels.
+
+To install it as a PWA, open your instance over **HTTPS** in your phone's browser. On Android, use Chrome's **Install app** / **Add to Home screen** menu. On iPhone or iPad, open Safari's **Share → Add to Home Screen** and choose **Open as Web App** if offered. The installed app opens in its own window. Installation and the service worker are available in production builds, with localhost supported for testing.
+
+Your phone must be able to reach your Dossier server; `localhost` on a phone refers to the phone itself. The PWA caches only a public offline message. Profiles, applications, documents and API responses are never put in its offline cache, and editing still requires a connection. If the server is unreachable, reconnect and tap **Try again**.
+
 ## Documentation
 
 The [wiki](https://github.com/AienTech/dossier/wiki) has what comes after installing:
@@ -131,7 +139,6 @@ The [wiki](https://github.com/AienTech/dossier/wiki) has what comes after instal
 
 ## Known limitations
 
-- **Desktop only:** made for a laptop or desktop browser, not for phones.
 - **Single user:** one password and one profile; there are no accounts.
 - **English interface:** the app itself is in English. Documents can be written in other languages; in the 21 built-in ones, their headings, dates and language levels are in that language too, and in one added with **Other language…** those stay in English.
 - **One instance:** run a single copy of the app per database. The nightly backups, the AI job queue and the PDF browser live inside the app's process.

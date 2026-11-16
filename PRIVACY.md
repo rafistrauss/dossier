@@ -6,6 +6,8 @@ In short: everything you enter is kept in your own database (PostgreSQL, or an S
 
 ## What Dossier keeps
 
+On a phone or tablet, Dossier can be installed as a home-screen web app. Its service worker stores only a public offline message in the browser's Cache Storage, until you clear the site's data or the worker replaces that cache. It does not cache your profile, applications, documents or API responses for offline use. Working with your data requires a connection to your server.
+
 | What | Where | Kept until |
 |---|---|---|
 | Your profile: basics with contact details and your photo, skills, languages, roles, projects, education, certifications, publications, references with their email and phone, and your facts about you | Database | You change or delete it |

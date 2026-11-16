@@ -329,3 +329,17 @@ The number above the hero's buttons is the Docker image's download count. GitHub
 ```bash
 docker compose down -v   # stops everything and deletes the database and node_modules volumes
 ```
+
+
+### Mobile and PWA verification
+
+`e2e/mobile.spec.ts` checks core screens at 320px, 390px and 768px, mobile navigation (Escape, link dismissal, desktop resize and preference preservation), public installation assets, and offline navigation/recovery. Run it against the production build with the usual end-to-end database and services:
+
+```sh
+yarn build
+yarn test:e2e e2e/mobile.spec.ts
+```
+
+The worker registers only in production and on a secure origin (HTTPS or localhost). It uses network navigation with a public offline fallback, without caching authenticated pages, RSC responses, API calls or downloads. Changes to the offline page should bump the `dossier-offline-v1` cache name in `public/sw.js` and its assertion in the end-to-end test. Keep `/sw.js`, `/manifest.webmanifest`, `/offline.html` and the icons accessible without a session. A strict `worker-src 'self'` policy permits registration without weakening the script nonce policy.
+
+For release testing, check installation and safe-area/keyboard behavior on an actual iOS and Android device. Browser automation covers layout and worker behavior, but does not exercise native installation dialogs.

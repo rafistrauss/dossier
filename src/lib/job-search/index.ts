@@ -12,6 +12,7 @@ import { freehire } from "./freehire";
 import { jsearch } from "./jsearch";
 import { postingKey, type FoundPosting, type JobSource, type SearchPage, type SearchQuery } from "./search";
 import { sourceCovers } from "./sources";
+import { matchesSalary } from "./salary";
 
 // Searching the chosen job source from the server (E14-1). Results are
 // cached for half an hour; failures come back as JobSearchError with a
@@ -57,7 +58,10 @@ export async function searchPostings<S extends JobSource>(
   if (hit) return hit;
   const found = await logged(() => adapter.search(query, credentials, next, context));
   // Postings clearly for another level go (public issue 59); ones that don't say stay.
-  const page = { ...found, postings: found.postings.filter((posting) => fitsExperience(posting, query)) };
+  const page = {
+    ...found,
+    postings: found.postings.filter((posting) => fitsExperience(posting, query) && matchesSalary(posting, query)),
+  };
   remember(key, page);
   return page;
 }

@@ -6,6 +6,7 @@ import type { JobSourceAdapter, JSearchHost, RequestContext, SourceCredentials }
 import { countryName } from "./countries";
 import { jobSearchError } from "./errors";
 import { requestJson } from "./http";
+import { salaryData } from "./salary";
 import { experienceAskedFor, safeLink, type FoundPosting, type PostedWithin, type SearchPage, type SearchQuery } from "./search";
 
 // JSearch (E14-1): Google for Jobs through OpenWeb Ninja, or the same API on
@@ -117,6 +118,7 @@ export function postingFromJob(job: Job): FoundPosting {
     place: placeOf(job).slice(0, 300),
     remote: job.job_is_remote ?? null,
     salary: salaryOf(job).slice(0, 200),
+    salaryData: salaryData(job.job_min_salary, job.job_salary_currency, job.job_salary_period),
     postedAt: postedAtOf(job),
     url: linkOf(job).slice(0, 2000),
     via: (job.job_publisher ?? "").trim().slice(0, 100),

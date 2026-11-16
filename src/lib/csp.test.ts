@@ -6,6 +6,8 @@ describe("contentSecurityPolicy (E11-5)", () => {
   it("allows scripts only with the nonce, and nothing from other hosts", () => {
     const policy = contentSecurityPolicy("abc");
     expect(policy).toContain("script-src 'self' 'nonce-abc' 'strict-dynamic'");
+    expect(policy).toContain("worker-src 'self'");
+    expect(policy).toContain("manifest-src 'self'");
     expect(policy).toContain("default-src 'self'");
     expect(policy).toContain("frame-ancestors 'none'");
     expect(policy).toContain("object-src 'none'");
