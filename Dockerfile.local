@@ -1,0 +1,17 @@
+# Reuse the installed runtime and Chromium; rebuild only the changed app.
+FROM ghcr.io/aientech/dossier@sha256:7e0bc5a204ce1ba1e775e327875b59c4117d851fa7556e6ce6d188b338b8b360 AS local-build
+USER root
+WORKDIR /build
+COPY package.json yarn.lock .yarnrc.yml ./
+RUN corepack yarn install --immutable
+COPY . .
+ENV NEXT_TELEMETRY_DISABLED=1
+RUN corepack yarn prisma generate
+RUN NODE_ENV=test corepack yarn vitest run src/lib/job-search --project node
+RUN NODE_ENV=test corepack yarn vitest run 'src/app/(app)/jobs/jobs-screen.test.tsx' 'src/app/(app)/settings/agent-section.test.tsx' --project dom
+RUN corepack yarn eslint src/lib/job-search/search.ts src/lib/job-search/salary.ts src/lib/job-search/salary.test.ts src/lib/job-search/jsearch.ts src/lib/job-search/adzuna.ts src/lib/job-search/index.ts 'src/app/(app)/jobs/search-fields.tsx' 'src/app/(app)/jobs/posting-results.tsx'
+RUN corepack yarn build
+
+FROM ghcr.io/aientech/dossier@sha256:7e0bc5a204ce1ba1e775e327875b59c4117d851fa7556e6ce6d188b338b8b360
+COPY --from=local-build --chown=node:node /build/.next/standalone /app/
+COPY --from=local-build --chown=node:node /build/.next/static /app/.next/static
