@@ -77,6 +77,27 @@ export function SearchFields({
           </option>
         ))}
       </Select>
+      <div className="col-span-full flex flex-col gap-4">
+        <div className="grid max-w-lg grid-cols-2 gap-4">
+          <Input label="Minimum annual salary" type="number" min={0} max={1_000_000_000} step="any"
+            value={value.minimumSalary ?? ""} placeholder="Any salary"
+            onChange={(event) => {
+              const amount = event.target.valueAsNumber;
+              onChange({ minimumSalary: Number.isFinite(amount) ? Math.min(1_000_000_000, Math.max(0, amount)) : undefined });
+            }} onBlur={onBlur} />
+          <Select label="Salary currency" value={value.salaryCurrency ?? "USD"} onChange={(event) => onChange({ salaryCurrency: event.target.value })}>
+            {["USD", "EUR", "GBP", "CAD", "AUD", "CHF", "INR", "NZD", "BRL", "MXN", "PLN", "SGD", "ZAR"].map((currency) => <option key={currency} value={currency}>{currency}</option>)}
+          </Select>
+        </div>
+        <div className="flex flex-wrap gap-4">
+          <Checkbox label="Require salary data" checked={value.requireSalary ?? false} onChange={(event) => onChange({ requireSalary: event.target.checked })} />
+          <Checkbox label="Exclude estimated salaries" checked={value.excludeEstimatedSalary ?? false} onChange={(event) => onChange({ excludeEstimatedSalary: event.target.checked })} />
+        </div>
+        <details className="text-label text-muted">
+          <summary className="cursor-pointer">How salary matching works</summary>
+          <p className="mt-2">Filters apply to each page as it loads. A minimum checks the lower end of the range in the selected currency; salaries without a numeric amount, currency or pay period are excluded. Hourly pay assumes 40 hours/week, weekly pay 52 weeks/year, daily pay 260 days/year, and monthly pay 12 months/year. No currency conversion. Estimates are excluded only when identified by the source.</p>
+        </details>
+      </div>
     </>
   );
 }

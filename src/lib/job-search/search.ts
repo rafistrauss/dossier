@@ -49,6 +49,10 @@ export const searchQuerySchema = z.object({
   radiusKm: z.literal(RADII_KM),
   remoteOnly: z.boolean(),
   postedWithin: z.enum(POSTED_VALUES),
+  minimumSalary: z.number().finite().min(0).max(1_000_000_000).optional(),
+  salaryCurrency: z.string().regex(/^[A-Z]{3}$/).optional(),
+  requireSalary: z.boolean().optional(),
+  excludeEstimatedSalary: z.boolean().optional(),
 });
 export type SearchQuery = z.output<typeof searchQuerySchema>;
 
@@ -73,6 +77,11 @@ export const foundPostingSchema = z.object({
   remote: z.boolean().nullable(),
   /** As the source writes it, e.g. "EUR 60,000–75,000 a year"; empty when there's none. */
   salary: z.string().max(200),
+  salaryData: z.object({
+    minimumAnnual: z.number().finite().positive().nullable(),
+    currency: z.string(),
+    estimated: z.boolean().nullable(),
+  }).optional(),
   postedAt: z.iso.datetime().nullable(),
   /** Where to read it or apply: always http(s), or empty. */
   url: z
@@ -134,7 +143,10 @@ export type PastSearchDay = {
 export function describeSearch(query: SearchQuery, countryName: string): string {
   const where = query.place ? `${query.place}, ${query.radiusKm} km` : countryName;
   const posted = POSTED_WITHIN.find((option) => option.value === query.postedWithin);
-  return [query.keywords, where, query.remoteOnly ? "Remote only" : "", posted && posted.value !== "any" ? posted.label : ""].filter(Boolean).join(" · ");
+  return [query.keywords, where, query.remoteOnly ? "Remote only" : "", posted && posted.value !== "any" ? posted.label : "",
+    query.minimumSalary ? `Minimum ${query.salaryCurrency ?? "USD"} ${query.minimumSalary.toLocaleString("en-US")}/year` : "",
+    query.requireSalary ? "Salary required" : "", query.excludeEstimatedSalary ? "Exclude salary estimates" : "",
+  ].filter(Boolean).join(" · ");
 }
 
 /** Identifies a posting across searches. */
@@ -190,6 +202,10 @@ export function queryFromParams(params: Record<string, string | string[] | undef
     radiusKm: RADII_KM.find((km) => km === radius) ?? DEFAULT_RADIUS_KM,
     remoteOnly: one(params.remote) === "1",
     postedWithin: posted ?? "any",
+    ...(Number(one(params.salaryMin)) > 0 && Number(one(params.salaryMin)) <= 1_000_000_000 ? { minimumSalary: Number(one(params.salaryMin)) } : {}),
+    ...(/^[A-Z]{3}$/.test(one(params.salaryCurrency)) ? { salaryCurrency: one(params.salaryCurrency) } : {}),
+    ...(one(params.requireSalary) === "1" ? { requireSalary: true } : {}),
+    ...(one(params.excludeEstimated) === "1" ? { excludeEstimatedSalary: true } : {}),
   };
 }
 
@@ -214,6 +230,10 @@ export function searchHref(query: SearchQuery): string {
   if (query.radiusKm !== DEFAULT_RADIUS_KM) params.set("radius", String(query.radiusKm));
   if (query.remoteOnly) params.set("remote", "1");
   if (query.postedWithin !== "any") params.set("posted", query.postedWithin);
+  if (query.minimumSalary) params.set("salaryMin", String(query.minimumSalary));
+  if (query.salaryCurrency) params.set("salaryCurrency", query.salaryCurrency);
+  if (query.requireSalary) params.set("requireSalary", "1");
+  if (query.excludeEstimatedSalary) params.set("excludeEstimated", "1");
   return `/jobs?${params.toString()}`;
 }
 

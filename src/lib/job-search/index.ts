@@ -10,6 +10,7 @@ import { arbeitsagentur } from "./arbeitsagentur";
 import { jsearch } from "./jsearch";
 import { postingKey, type FoundPosting, type JobSource, type SearchPage, type SearchQuery } from "./search";
 import { sourceCovers } from "./sources";
+import { matchesSalary } from "./salary";
 
 // Searching the chosen job source from the server (E14-1). Results are
 // cached for half an hour; failures come back as JobSearchError with a
@@ -52,7 +53,8 @@ export async function searchPostings<S extends JobSource>(
   const key = `search:${source}:${JSON.stringify(query)}:${next ?? ""}`;
   const hit = cached<SearchPage>(key);
   if (hit) return hit;
-  const page = await logged(() => adapter.search(query, credentials, next, context));
+  const answer = await logged(() => adapter.search(query, credentials, next, context));
+  const page = { ...answer, postings: answer.postings.filter((posting) => matchesSalary(posting, query)) };
   remember(key, page);
   return page;
 }

@@ -7,6 +7,7 @@ import { fetchPosting } from "@/lib/posting-fetch";
 import type { JobSourceAdapter, RequestContext, SourceCredentials } from "./adapter";
 import { jobSearchError } from "./errors";
 import { requestJson } from "./http";
+import { salaryData } from "./salary";
 import { POSTED_WITHIN, safeLink, type FoundPosting, type SearchPage, type SearchQuery } from "./search";
 import { plainText } from "./text";
 
@@ -62,6 +63,7 @@ export function postingFromResult(result: Result, country: string): FoundPosting
     place: plainText(result.location?.display_name).slice(0, 300),
     remote: null,
     salary: salaryOf(result, country).slice(0, 200),
+    salaryData: salaryData(result.salary_min, CURRENCIES[country], "YEAR", result.salary_is_predicted == null ? null : ["1", 1, true].includes(result.salary_is_predicted)),
     postedAt: Number.isNaN(created) ? null : new Date(created).toISOString(),
     url: safeLink(result.redirect_url).slice(0, 2000),
     via: "",
