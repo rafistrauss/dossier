@@ -2,10 +2,11 @@
 
 import { Menu, PanelLeftClose, PanelLeftOpen, X } from "lucide-react";
 import { Dialog } from "radix-ui";
+import { usePathname } from "next/navigation";
 import { createContext, use, useEffect, useState, type ReactNode } from "react";
 
 import { cn } from "@/lib/cn";
-import { rememberPreference, SIDEBAR_COOKIE } from "@/lib/ui-preferences";
+import { APPLICATION_SIDEBAR_COOKIE, rememberPreference, SIDEBAR_COOKIE } from "@/lib/ui-preferences";
 
 const CollapsedContext = createContext<{ collapsed: boolean; expand: () => void }>({ collapsed: false, expand: () => {} });
 
@@ -19,18 +20,26 @@ export function useExpandSidebar(): () => void {
   return use(CollapsedContext).expand;
 }
 
+/** An application's own screen, where the sidebar keeps its own state (E27-8); not the list, nor New application. */
+const isApplicationScreen = (pathname: string | null) => /^\/applications\/[^/]+/.test(pathname ?? "");
+
 /**
  * The sidebar's frame, collapsible to a strip of icons.
  * The choice is kept in a cookie, so the server renders the next page the
- * same way. Inside, `group-data-collapsed/sidebar:` variants hide what
- * doesn't fit, so the server-rendered parts need no state of their own.
+ * same way. An application's screen has its own, collapsed until the user
+ * opens it there, so the document gets the room (E27-8); toggling one never
+ * changes the other. Inside, `group-data-collapsed/sidebar:` variants hide
+ * what doesn't fit, so the server-rendered parts need no state of their own.
  */
 export function SidebarFrame({
   initialCollapsed,
+  initialApplicationCollapsed = true,
   brand,
   children,
 }: {
   initialCollapsed: boolean;
+  /** On an application's screen. */
+  initialApplicationCollapsed?: boolean;
   /** The logo, which the expand button replaces on hover while collapsed. */
   brand: ReactNode;
   children: ReactNode;
@@ -43,10 +52,13 @@ export function SidebarFrame({
     desktop.addEventListener("change", close);
     return () => desktop.removeEventListener("change", close);
   }, []);
-  const [collapsed, setCollapsed] = useState(initialCollapsed);
+  const onApplication = isApplicationScreen(usePathname());
+  const [elsewhere, setElsewhere] = useState(initialCollapsed);
+  const [onScreen, setOnScreen] = useState(initialApplicationCollapsed);
+  const collapsed = onApplication ? onScreen : elsewhere;
   const change = (next: boolean) => {
-    setCollapsed(next);
-    rememberPreference(SIDEBAR_COOKIE, next ? "collapsed" : "expanded");
+    (onApplication ? setOnScreen : setElsewhere)(next);
+    rememberPreference(onApplication ? APPLICATION_SIDEBAR_COOKIE : SIDEBAR_COOKIE, next ? "collapsed" : "expanded");
   };
   const toggle = () => change(!collapsed);
   const Icon = collapsed ? PanelLeftOpen : PanelLeftClose;
@@ -86,10 +98,11 @@ export function SidebarFrame({
       </Dialog.Root>
       <CollapsedContext value={{ collapsed, expand: () => change(false) }}>
         <aside
+          aria-label="Sidebar"
           data-collapsed={collapsed || undefined}
           className={cn(
             "group/sidebar sticky top-0 hidden h-dvh md:flex shrink-0 flex-col self-start overflow-x-hidden overflow-y-auto border-r border-line bg-sidebar motion-safe:transition-[width] motion-safe:duration-200",
-            collapsed ? "w-12" : "w-[260px]",
+            collapsed ? "w-[60px]" : "w-[264px]",
           )}
         >
           <div
