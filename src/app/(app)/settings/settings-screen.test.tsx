@@ -30,7 +30,7 @@ describe("SettingsScreen (E34-3)", () => {
       </SettingsScreen>,
     );
     expect(screen.getByRole("heading", { level: 1, name: "Settings" })).toBeInTheDocument();
-    expect(screen.getByText("It's your server, so it's your call. Every change saves on its own.")).toBeInTheDocument();
+    expect(screen.getByText("Most settings save automatically. Credentials require an explicit save.")).toBeInTheDocument();
     const nav = screen.getByRole("navigation", { name: "Settings sections" });
     expect(within(nav).getByRole("link", { name: "Overview" })).toHaveAttribute("href", "/settings");
     expect(within(nav).getAllByRole("group").map((group) => group.getAttribute("aria-label"))).toEqual(["Writing", "Finding work", "Connected", "Your data · About"]);

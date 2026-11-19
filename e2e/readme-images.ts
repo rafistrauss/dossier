@@ -74,9 +74,8 @@ test.describe("the board", () => {
 test("the inbox with replies from Gmail", async ({ page }) => {
   await page.goto("/settings?section=google");
   await page.getByLabel("Client ID").fill("e2e-google-client.apps.googleusercontent.com");
-  await page.getByLabel("Client ID").press("Enter");
   await page.getByLabel("Client secret").fill("e2e-google-secret");
-  await page.getByLabel("Client secret").press("Enter");
+  await page.getByRole("button", { name: "Save OAuth client" }).click();
   await page.getByRole("link", { name: "Connect Google account" }).click();
   await expect(page.getByRole("status").filter({ hasText: "Connected as" })).toBeVisible();
 

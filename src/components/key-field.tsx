@@ -11,8 +11,7 @@ export type KeyState = "none" | "set" | "unreadable" | "env";
 const KEY_UNREADABLE = "Your saved key can't be read. Please enter it again.";
 
 /**
- * A write-only key (Settings → Job search, Scoring): saved when you leave
- * the field or press Enter, then only "Saved" shows.
+ * A write-only key for Settings → Job search and Scoring.
  */
 export function KeyField({
   label,
@@ -38,6 +37,7 @@ export function KeyField({
         label={label}
         type="password"
         autoComplete="off"
+        data-bwignore="true"
         value={value}
         placeholder={
           keyState === "set" ? "Saved · type a new key to replace it" : keyState === "env" ? `Using ${envName} · type one to save it here` : "Stored encrypted on your server"
@@ -55,14 +55,10 @@ export function KeyField({
           ) : undefined
         }
         onChange={(event) => setValue(event.target.value)}
-        onBlur={() => void save()}
-        onKeyDown={(event) => {
-          if (event.key === "Enter" && value.trim()) {
-            event.preventDefault();
-            void save();
-          }
-        }}
       />
+      <Button variant="secondary" size="sm" className="self-start" disabled={!value.trim()} onClick={() => void save()}>
+        Save key
+      </Button>
       {(keyState === "set" || keyState === "unreadable") && (
         <Button variant="text" size="sm" className="self-start" onClick={() => void onSave({ action: "clear" })}>
           Remove saved key

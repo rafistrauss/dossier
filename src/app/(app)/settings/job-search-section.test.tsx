@@ -84,10 +84,13 @@ describe("JobSearchSection", () => {
     expect(setPortalOn).toHaveBeenCalledWith({ portal: "ADZUNA", on: false });
   });
 
-  it("saves a key when you leave the field, then forgets it in the browser", async () => {
+  it("saves a key only on request, then forgets it in the browser", async () => {
     render(<JobSearchSection initial={viewOf({ JSEARCH: { on: true } })} />);
     await userEvent.type(screen.getByLabelText("API key"), "ak_secret");
     await userEvent.tab();
+    expect(savePortalKey).not.toHaveBeenCalled();
+    expect(screen.getByLabelText("API key")).toHaveAttribute("data-bwignore", "true");
+    await userEvent.click(screen.getByRole("button", { name: "Save key" }));
     expect(savePortalKey).toHaveBeenCalledWith({ portal: "JSEARCH", field: "key", change: { action: "set", value: "ak_secret" } });
     await waitFor(() => expect(screen.getByLabelText("API key")).toHaveValue(""));
     await userEvent.click(screen.getByRole("button", { name: "Remove saved key" }));

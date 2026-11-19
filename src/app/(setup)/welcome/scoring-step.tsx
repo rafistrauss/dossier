@@ -77,6 +77,7 @@ export function ScoringStep({ initial }: { initial: ScoringView }) {
               label={info.key.label}
               type="password"
               autoComplete="off"
+              data-bwignore="true"
               placeholder={initial.keys[scorer] === "set" ? "Saved · paste a new one to replace it" : "Paste it here"}
               hint="Stored encrypted on your server, and never shown again."
               value={key}

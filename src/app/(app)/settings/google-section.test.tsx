@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { checkInbox, disconnectGoogleAccount, saveGoogleSettings } from "@/lib/google/actions";
+import { checkInbox, disconnectGoogleAccount, saveGoogleClient, saveGoogleSettings } from "@/lib/google/actions";
 
 import { GoogleSection, type GoogleClientView, type GoogleSettings } from "./google-section";
 
@@ -32,7 +32,10 @@ const settings: GoogleSettings = {
 const redirect = "http://localhost:3000/api/google/callback";
 const client: GoogleClientView = { id: "", idState: "none", secretState: "none" };
 
-beforeEach(() => vi.mocked(saveGoogleSettings).mockClear());
+beforeEach(() => {
+  vi.mocked(saveGoogleSettings).mockClear();
+  vi.mocked(saveGoogleClient).mockClear();
+});
 
 describe("GoogleSection (E15-1)", () => {
   it("explains the setup while the server has no Google client", () => {
@@ -40,6 +43,29 @@ describe("GoogleSection (E15-1)", () => {
     expect(screen.getByText(redirect)).toBeInTheDocument();
     expect(screen.getByLabelText("Client ID")).toBeInTheDocument();
     expect(screen.getByLabelText("Client secret")).toHaveAttribute("type", "password");
+  });
+
+  it("leaves the saved OAuth secret alone until Save OAuth client is selected", async () => {
+    const user = userEvent.setup();
+    render(<GoogleSection client={{ ...client, secretState: "set" }} connection={{ status: "not-configured" }} initial={settings} browserTimeZone={null} redirectUri={redirect} />);
+
+    const secret = screen.getByLabelText("Client secret");
+    expect(secret).toHaveAttribute("autocomplete", "off");
+    expect(secret).toHaveAttribute("data-bwignore", "true");
+    await user.type(secret, "autofilled-password{Enter}");
+    await user.tab();
+    expect(saveGoogleClient).not.toHaveBeenCalled();
+
+    await user.clear(secret);
+    await user.type(secret, "google-secret");
+    await user.type(screen.getByLabelText("Client ID"), "client.apps.googleusercontent.com");
+    await user.click(screen.getByRole("button", { name: "Save OAuth client" }));
+    expect(saveGoogleClient).toHaveBeenCalledOnce();
+    expect(saveGoogleClient).toHaveBeenCalledWith({
+      id: "client.apps.googleusercontent.com",
+      secret: { action: "set", value: "google-secret" },
+    });
+    expect(secret).toHaveValue("");
   });
 
   it("offers to connect", () => {

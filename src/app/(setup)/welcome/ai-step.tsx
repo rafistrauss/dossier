@@ -188,6 +188,7 @@ function ChoicePanel({ choice, onConnected }: { choice: AiChoice; onConnected: (
             label={choice.key.label}
             type="password"
             autoComplete="off"
+            data-bwignore="true"
             placeholder={choice.key.startsWith ? `Starts with ${choice.key.startsWith}` : "Paste it here"}
             hint="Stored encrypted on your server, and never shown again."
             value={key}

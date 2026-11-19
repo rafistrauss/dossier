@@ -84,11 +84,16 @@ describe("AiProviderSection", () => {
     await waitFor(() => expect(saveAiProvider).toHaveBeenCalledWith({ provider: "LMSTUDIO", baseUrl: "http://host.docker.internal:1234", model: "" }));
   });
 
-  it("saves a key when you leave the field, then shows only its last four characters, with Replace (E6-2, ST4)", async () => {
+  it("saves a key only on request, then shows only its last four characters, with Replace (E6-2, ST4)", async () => {
     const user = userEvent.setup();
     render(<AiProviderSection initial={{ ...local, provider: "ANTHROPIC", baseUrl: "https://api.anthropic.com", model: "claude-sonnet-5-5" }} />);
     await user.type(screen.getByLabelText("API key"), "sk-ant-secret-3f9a");
     await user.tab();
+    await user.click(screen.getByRole("button", { name: "Test connection" }));
+    expect(testAiConnection).toHaveBeenCalled();
+    expect(saveApiKey).not.toHaveBeenCalled();
+    expect(screen.getByLabelText("API key")).toHaveAttribute("data-bwignore", "true");
+    await user.click(screen.getByRole("button", { name: "Save key" }));
     expect(saveApiKey).toHaveBeenCalledWith({ provider: "ANTHROPIC", change: { action: "set", value: "sk-ant-secret-3f9a" } });
     const saved = await screen.findByRole("group", { name: "API key" });
     expect(saved).toHaveTextContent("••••••••Saved, ending in 3f9a");

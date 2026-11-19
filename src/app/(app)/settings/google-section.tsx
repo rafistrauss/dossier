@@ -71,7 +71,7 @@ export const CALLBACK_MESSAGES: Record<string, string> = {
 /**
  * Settings → Google (E15-1): connect Gmail and Calendar, choose what Dossier
  * reads, and set the working hours that interview times are offered in.
- * Every field saves on its own. Nothing is ever sent without asking.
+ * The OAuth client has its own save button.
  */
 export function GoogleSection({
   connection,
@@ -397,9 +397,8 @@ const SECRET_PLACEHOLDER: Record<GoogleClientView["secretState"], string> = {
 };
 
 /**
- * The OAuth client: its ID, and a write-only secret, each saved when you
- * leave its field. Saved here, they override the DOSSIER_GOOGLE_CLIENT_*
- * variables. A different client ID disconnects the account.
+ * OAuth credentials saved here override the DOSSIER_GOOGLE_CLIENT_* variables.
+ * A different client ID disconnects the account.
  */
 export function ClientCard({ initial, connected }: { initial: GoogleClientView; connected: boolean }) {
   const track = useTrackSave();
@@ -417,13 +416,14 @@ export function ClientCard({ initial, connected }: { initial: GoogleClientView; 
     return true;
   };
 
-  const saveId = () => {
-    if (id.trim() === view.id) return;
-    void save({ id });
-  };
-  const saveSecret = async () => {
-    if (!secret.trim()) return;
-    if (await save({ secret: { action: "set", value: secret } })) setSecret("");
+  const idChanged = id.trim() !== view.id;
+  const hasSecretDraft = Boolean(secret.trim());
+  const saveClient = async () => {
+    if (!idChanged && !hasSecretDraft) return;
+    if (await save({
+      ...(idChanged ? { id } : {}),
+      ...(hasSecretDraft ? { secret: { action: "set", value: secret } } : {}),
+    })) setSecret("");
   };
 
   return (
@@ -442,32 +442,20 @@ export function ClientCard({ initial, connected }: { initial: GoogleClientView; 
           hint={view.idState === "env" ? "From DOSSIER_GOOGLE_CLIENT_ID · type one to save it here" : undefined}
           spellCheck={false}
           autoComplete="off"
+          data-bwignore="true"
           inputClassName="font-mono text-[13.5px]"
           onChange={(event) => setId(event.target.value)}
-          onBlur={saveId}
-          onKeyDown={(event) => {
-            if (event.key === "Enter") {
-              event.preventDefault();
-              saveId();
-            }
-          }}
         />
         <div className="flex flex-col gap-2.5">
           <Input
             label="Client secret"
             type="password"
             autoComplete="off"
+            data-bwignore="true"
             value={secret}
             placeholder={SECRET_PLACEHOLDER[view.secretState]}
             error={view.secretState === "unreadable" ? "The saved secret can't be read, probably since DOSSIER_SECRET changed. Enter it again." : undefined}
             onChange={(event) => setSecret(event.target.value)}
-            onBlur={() => void saveSecret()}
-            onKeyDown={(event) => {
-              if (event.key === "Enter" && secret.trim()) {
-                event.preventDefault();
-                void saveSecret();
-              }
-            }}
           />
           {(view.secretState === "set" || view.secretState === "unreadable") && (
             <Button variant="text" size="sm" className="self-start" onClick={() => void save({ secret: { action: "clear" } })}>
@@ -476,6 +464,9 @@ export function ClientCard({ initial, connected }: { initial: GoogleClientView; 
           )}
         </div>
       </div>
+      <Button variant="secondary" size="sm" className="self-start" disabled={!idChanged && !hasSecretDraft} onClick={() => void saveClient()}>
+        Save OAuth client
+      </Button>
     </Card>
   );
 }

@@ -248,11 +248,12 @@ function KeyForm({ portal, onConnected }: { portal: PortalView; onConnected: () 
           if (status.state !== "checking") void connect();
         }}
       >
-        {portal.id === "ADZUNA" && <Input label="Application ID" autoComplete="off" value={appId} onChange={(event) => setAppId(event.target.value)} />}
+        {portal.id === "ADZUNA" && <Input label="Application ID" autoComplete="off" data-bwignore="true" value={appId} onChange={(event) => setAppId(event.target.value)} />}
         <Input
           label={portal.id === "ADZUNA" ? "Application key" : `${portal.name} API key`}
           type="password"
           autoComplete="off"
+          data-bwignore="true"
           placeholder={savedKey === "set" ? "Saved · paste a new one to replace it" : "Paste it here"}
           hint="Stored encrypted on your server, and never shown again."
           value={key}

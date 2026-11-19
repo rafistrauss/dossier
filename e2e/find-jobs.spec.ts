@@ -125,7 +125,7 @@ test("scores with Jev once it's chosen in Settings → Scoring (#274)", async ({
   await expect(page.getByRole("note")).toContainText("Each posting you score goes to TypeSafe");
   const key = page.getByLabel("TypeSafe key");
   await key.fill("e2e-typesafe-key");
-  await key.press("Enter");
+  await page.getByRole("button", { name: "Save key" }).click();
   await expect(key).toHaveAttribute("placeholder", "Saved · type a new key to replace it");
   await page.getByRole("button", { name: "Test connection" }).click();
   await expect(page.getByText(/^Connected · jev-1\.14\.0 answered in/)).toBeVisible();

@@ -42,9 +42,8 @@ test("connects Google, sends an application through Gmail, and answers the reply
   await page.goto("/settings?section=google");
   await expect(page.getByRole("link", { name: "Connect Google account" })).toBeHidden();
   await page.getByLabel("Client ID").fill("e2e-google-client.apps.googleusercontent.com");
-  await page.getByLabel("Client ID").press("Enter");
   await page.getByLabel("Client secret").fill("e2e-google-secret");
-  await page.getByLabel("Client secret").press("Enter");
+  await page.getByRole("button", { name: "Save OAuth client" }).click();
   await expectAccessible(page);
   await page.getByRole("link", { name: "Connect Google account" }).click();
   await expect(page.getByRole("status").filter({ hasText: "Connected as" })).toContainText("jane.doe@gmail.example");

@@ -161,7 +161,7 @@ function ChannelForm({ channel, onSaved, onCancel }: { channel: ChannelView | nu
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Input label="SMTP server" placeholder="smtp.example.com" value={draft.host} onChange={(event) => patch({ host: event.target.value })} />
             <Input label="Port" inputMode="numeric" hint="587 for STARTTLS, 465 for TLS." value={draft.port} onChange={(event) => patch({ port: event.target.value })} />
-            <Input label="User" autoComplete="off" value={draft.user} onChange={(event) => patch({ user: event.target.value })} />
+            <Input label="User" autoComplete="off" data-bwignore="true" value={draft.user} onChange={(event) => patch({ user: event.target.value })} />
             <Input label="From" type="email" placeholder="dossier@example.com" value={draft.from} onChange={(event) => patch({ from: event.target.value })} />
             <Input label="To" type="email" placeholder="you@example.com" value={draft.to} onChange={(event) => patch({ to: event.target.value })} />
           </div>
@@ -169,6 +169,8 @@ function ChannelForm({ channel, onSaved, onCancel }: { channel: ChannelView | nu
         {draft.type === "WEBHOOK" && (
           <Input
             label="Address"
+            autoComplete="off"
+            data-bwignore="true"
             placeholder="https://n8n.example.com/webhook/…"
             hint="Each event goes there as JSON, with an X-Dossier-Signature header made with a secret Dossier makes. Addresses on your own network work too."
             value={draft.url}
@@ -178,7 +180,7 @@ function ChannelForm({ channel, onSaved, onCancel }: { channel: ChannelView | nu
         {draft.type === "NTFY" && (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Input label="Server" hint="ntfy.sh, or your own server." value={draft.server} onChange={(event) => patch({ server: event.target.value })} />
-            <Input label="Topic" autoComplete="off" value={draft.topic} onChange={(event) => patch({ topic: event.target.value })} />
+            <Input label="Topic" autoComplete="off" data-bwignore="true" value={draft.topic} onChange={(event) => patch({ topic: event.target.value })} />
           </div>
         )}
         {secretLabel && (
@@ -186,6 +188,7 @@ function ChannelForm({ channel, onSaved, onCancel }: { channel: ChannelView | nu
             label={draft.type === "NTFY" ? `${secretLabel} (optional)` : secretLabel}
             type="password"
             autoComplete="off"
+            data-bwignore="true"
             placeholder={channel?.hasSecret ? "Saved · type a new one to replace it" : undefined}
             hint="Stored encrypted on your server, and never shown again."
             value={draft.secret}

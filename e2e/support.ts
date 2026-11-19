@@ -191,9 +191,8 @@ export async function inFakeCalendar(method: "POST" | "PATCH" | "DELETE", id?: s
 export async function connectFakeGoogle(page: Page): Promise<void> {
   await page.goto("/settings?section=google");
   await page.getByLabel("Client ID").fill("e2e-google-client.apps.googleusercontent.com");
-  await page.getByLabel("Client ID").press("Enter");
   await page.getByLabel("Client secret").fill("e2e-google-secret");
-  await page.getByLabel("Client secret").press("Enter");
+  await page.getByRole("button", { name: "Save OAuth client" }).click();
   await page.getByRole("link", { name: "Connect Google account" }).click();
   await page.getByRole("status").filter({ hasText: "Connected as" }).waitFor();
 }

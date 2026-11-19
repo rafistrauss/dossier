@@ -25,8 +25,7 @@ type Connection =
 /**
  * Settings → Scoring (#274, E25-2): which scoring model judges how well
  * postings fit, from the one list of them, with the chosen one's key and a
- * connection test. Each change saves on its own; a key is saved when you
- * leave its field and never shown again.
+ * connection test. Keys are saved explicitly and never shown again.
  */
 export function ScoringSection({ initial }: { initial: ScoringView }) {
   const track = useTrackSave();

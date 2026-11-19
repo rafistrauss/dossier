@@ -35,8 +35,8 @@ type Apply = (result: { ok: true; data: JobSearchSettingsView } | { ok: false; e
 
 /**
  * Settings → Job search (E14-4, E22-3): the portals Find jobs searches. Any
- * number can be on, and each keeps its own fields. A field saves when you
- * leave it, and a key is never shown again. The Bundesagentur für Arbeit goes
+ * number can be on, and each keeps its own fields. Keys require an explicit
+ * save and are never shown again. The Bundesagentur für Arbeit goes
  * on only once its note is accepted, and isn't offered when the server turns
  * it off (#223). Below them, when untouched postings move to the Archive
  * (E22-7).
@@ -318,6 +318,7 @@ function PortalField({
       value={text}
       spellCheck={false}
       autoComplete="off"
+      data-bwignore="true"
       inputClassName="font-mono text-[13.5px]"
       onChange={(event) => setText(event.target.value)}
       onBlur={() => {

@@ -164,7 +164,6 @@ export function AiProviderSection({ initial }: { initial: AiSettingsView }) {
 
   const test = async () => {
     if (connection.status === "testing") return;
-    if (keyInput.trim()) await saveKey({ action: "set", value: keyInput });
     // Actions run one after another, so pending saves land before the test.
     flush();
     setConnection({ status: "testing" });
@@ -306,25 +305,28 @@ export function AiProviderSection({ initial }: { initial: AiSettingsView }) {
                 hint={keyState === "unreadable" ? undefined : option.apiKey.hint}
                 type="password"
                 autoComplete="off"
+                data-bwignore="true"
                 autoFocus={replacingKey}
                 value={keyInput}
                 placeholder={replacingKey ? "Type the new key" : "Stored encrypted on your server"}
                 error={keyState === "unreadable" ? API_KEY_UNREADABLE : undefined}
                 onChange={(event) => setKeyInput(event.target.value)}
-                onBlur={() => {
-                  if (keyInput.trim()) void saveKey({ action: "set", value: keyInput });
-                }}
                 onKeyDown={(event) => {
-                  if (event.key === "Enter" && keyInput.trim()) {
-                    event.preventDefault();
-                    void saveKey({ action: "set", value: keyInput });
-                  }
                   if (event.key === "Escape" && replacingKey) {
                     setKeyInput("");
                     setReplacingKey(false);
                   }
                 }}
               />
+              <Button
+                variant="secondary"
+                size="sm"
+                className="self-start"
+                disabled={!keyInput.trim()}
+                onClick={() => void saveKey({ action: "set", value: keyInput })}
+              >
+                Save key
+              </Button>
               {replacingKey ? (
                 <Button
                   variant="text"

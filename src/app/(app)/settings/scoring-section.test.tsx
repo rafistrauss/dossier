@@ -43,10 +43,13 @@ describe("ScoringSection (#274)", () => {
     expect(screen.getByRole("link", { name: "the TypeSafe console" })).toHaveAttribute("href", "https://console.typesafe.ai/keys");
   });
 
-  it("saves the key when the field is left, and removes it on request", async () => {
+  it("saves the key only on request, and removes it on request", async () => {
     render(<ScoringSection initial={jev} />);
     await userEvent.type(screen.getByLabelText("TypeSafe key"), "ts_live_123");
     await userEvent.tab();
+    expect(saveScoringKey).not.toHaveBeenCalled();
+    expect(screen.getByLabelText("TypeSafe key")).toHaveAttribute("data-bwignore", "true");
+    await userEvent.click(screen.getByRole("button", { name: "Save key" }));
     expect(saveScoringKey).toHaveBeenCalledWith({ scorer: "JEV", change: { action: "set", value: "ts_live_123" } });
     expect(screen.getByLabelText("TypeSafe key")).toHaveValue("");
     expect(screen.getByLabelText("TypeSafe key")).toHaveAttribute("placeholder", "Saved · type a new key to replace it");

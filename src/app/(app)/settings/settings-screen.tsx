@@ -67,7 +67,7 @@ function SettingsNav({ section, status }: { section: SettingsPage; status: Setti
 /**
  * The Settings frame (E10-1, E34): the overview on its own, or a section
  * between the grouped list on the left and, for some, a column on the
- * right. Every control saves on its own; the header says when it's done.
+ * right. The header shows save status.
  */
 export function SettingsScreen({ section, status, aside, children }: { section: SettingsPage; status: SettingsStatus; aside?: ReactNode; children: ReactNode }) {
   const saves = useSaveTracker();
@@ -77,7 +77,7 @@ export function SettingsScreen({ section, status, aside, children }: { section: 
       <PageHeader
         breadcrumb={section === "overview" ? undefined : [{ label: "Settings", href: "/settings" }, { label: settingsLabel(section) }]}
         title="Settings"
-        description="It's your server, so it's your call. Every change saves on its own."
+        description="Most settings save automatically. Credentials require an explicit save."
         actions={<SavedIndicator status={saves.status} savedAt={saves.savedAt} />}
       />
       {section === "overview" ? (
