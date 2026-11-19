@@ -16,3 +16,22 @@ The application is bound to loopback port 3080; Caddy provides HTTPS at `dossier
 SQLite, nightly backups and exports persist in the Docker volume `dossier_data`. Do not remove that volume when upgrading. Secrets live in the ignored `.env` file. The generated sign-in password is stored in `/home/pi/.config/dossier/login-password` with owner-only access. To change it, pipe a new password to `docker run --rm -i dossier:pi-integration hash-password`, replace DOSSIER_PASSWORD in `.env`, and recreate the container. Preserve DOSSIER_SECRET because it encrypts saved keys.
 
 AI provider and job-search settings can be configured after sign-in. No provider credentials are preconfigured.
+
+## Deploy from Settings
+
+Publish reviewed updates to `origin/integration/pi-all-open-work` after merging the desired upstream release into that branch. The Pi must have read access to the branch and a clean checkout. The worker fast-forwards the Pi checkout and builds the image while the current app is still running. Before restarting the container it takes a SQLite backup in the persistent volume at `/data/deployment-backups`. If deployment fails after the restart, use the service log to diagnose it before restoring an older image or database.
+
+Enable the worker as the Pi user with Docker access. Take a backup of the live app before the first rebuild.
+
+```sh
+cd /home/pi/dossier
+install -d -m 700 "$HOME/.local/state/dossier-update"
+install -d "$HOME/.config/systemd/user"
+install -m 644 docker/pi/dossier-update.{service,timer} "$HOME/.config/systemd/user/"
+systemctl --user daemon-reload
+systemctl --user enable --now dossier-update.timer
+loginctl enable-linger "$USER"
+docker compose -p dossier -f compose.pi.yml -f docker/pi/compose.update.yml up -d --build --wait
+```
+
+Open **Settings → About → Deploy update** while signed in. The card shows whether the request is pending, succeeded, or failed. Check `journalctl --user -u dossier-update.service` for build and deployment output. Keep using both Compose files for subsequent manual deployments so the updater stays connected.

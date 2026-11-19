@@ -27,6 +27,7 @@ import { loadScoringConfig, scoringView } from "@/lib/scoring/config";
 import { agentCoversOf } from "@/lib/settings";
 import { loadSettings } from "@/lib/settings-data";
 import { loadSettingsStatus } from "@/lib/settings-status-data";
+import { deploymentUpdateStatus } from "@/lib/deployment-update";
 import { availableUpdate } from "@/lib/update-check";
 import { USAGE_PING_HOST, usagePingChoice } from "@/lib/usage-ping";
 
@@ -36,6 +37,7 @@ import { AiBehaviour } from "./ai-behaviour";
 import { AiDataFlows } from "./ai-data-flows";
 import { AiProviderSection } from "./ai-provider-section";
 import { DataSection } from "./data-section";
+import { DeploymentUpdateCard } from "./deployment-update-card";
 import { DocumentsSection } from "./documents-section";
 import { GoogleSection } from "./google-section";
 import { GoogleNotice } from "./google-notice";
@@ -57,6 +59,8 @@ export default async function SettingsPage({ searchParams }: PageProps<"/setting
   const params = await searchParams;
   const section = settingsSectionFromParam(params.section);
   const [settings, status, aiView] = await Promise.all([loadSettings(), loadSettingsStatus(), section === "ai" ? loadAiSettingsView() : null]);
+
+  const deployment = section === "about" ? await deploymentUpdateStatus() : null;
 
   return (
     <SettingsScreen
@@ -158,11 +162,14 @@ export default async function SettingsPage({ searchParams }: PageProps<"/setting
           preview={await filePreview()}
         />
       ) : (
-        <AboutSection
-          facts={await aboutFacts()}
-          usagePing={await usagePingView()}
-          updates={{ daily: settings.updateCheck, available: availableUpdate(settings) }}
-        />
+        <>
+          <AboutSection
+            facts={await aboutFacts()}
+            usagePing={await usagePingView()}
+            updates={{ daily: settings.updateCheck, available: availableUpdate(settings) }}
+          />
+          {deployment && <DeploymentUpdateCard initial={deployment} />}
+        </>
       )}
     </SettingsScreen>
   );

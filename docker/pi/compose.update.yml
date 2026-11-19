@@ -1,0 +1,6 @@
+services:
+  app:
+    environment:
+      DOSSIER_UPDATE_DIR: /run/dossier-update
+    volumes:
+      - "${HOME}/.local/state/dossier-update:/run/dossier-update"

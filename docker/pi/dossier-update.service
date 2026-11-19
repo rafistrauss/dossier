@@ -1,0 +1,8 @@
+[Unit]
+Description=Deploy a requested Dossier update
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/dossier
+ExecStart=%h/dossier/docker/pi/deploy-update.sh
+UMask=0077
